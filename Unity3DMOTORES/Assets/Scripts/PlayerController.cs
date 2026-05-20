@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
@@ -8,22 +9,41 @@ public class PlayerController : MonoBehaviour
     DiabloInput m_input;
 
     InputAction m_moveAction;
+    InputAction[] m_switchWeaponActions = new InputAction[3];
+
+    [SerializeField] GameObject[] weapons = new GameObject[3];
+    Iweapon currentWeapon;
+
 
     enum TargetType
     {
-        Floor, Enemy
+        Floor, Enemy, None
 
     }
     struct Target
     {
-        TargetType type;
-        GameObject body;
-        Vector3 position;
+       public Target(TargetType type, RaycastHit hit)
+        {
+            Type = type;
+            Hit = hit;
+
+        }
+
+        public TargetType Type;
+        public RaycastHit Hit;
     }
+   
 
     Vector3 mousePos = new Vector3();
 
     [SerializeField] LayerMask mask;
+    Target m_target = new Target(TargetType.None, new RaycastHit());
+
+
+    [SerializeField] float attack_range = 10f;
+    [SerializeField] float cooldown = 1f;
+    bool can_shoot = true;
+
 
     private void Awake()
     {
@@ -33,12 +53,14 @@ public class PlayerController : MonoBehaviour
         m_input.Main.Enable();
 
         m_moveAction = m_input.Main.Move;
+
+        m_switchWeaponActions = new InputAction[3] { m_input.Main.weapon1, m_input.Main.weapon2, m_input.Main.weapon3 };
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        currentWeapon = weapons[0].GetComponent<Iweapon>();
     }
 
     // Update is called once per frame
@@ -50,6 +72,23 @@ public class PlayerController : MonoBehaviour
         {
             MoveTo();
         }
+        switch(m_target.Type)
+        {
+            case TargetType.Enemy:
+                m_agent.destination = m_target.Hit.transform.position;
+                if(Vector3.Distance(transform.position, m_agent.destination) <= attack_range)
+                {
+                    can_shoot = false;
+                    m_agent.isStopped = true;
+                    transform.LookAt(m_agent.destination);
+                    Shoot();
+                }
+                break;
+            case TargetType.Floor:
+            case TargetType.None:
+            default:
+                break;
+        }
     }
 
 
@@ -58,11 +97,51 @@ public class PlayerController : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.ScreenPointToRay(mousePos), out hit, 100, LayerMask.GetMask("Floor")))
         {
-        
+            string layerName = LayerMask.LayerToName(hit.transform.gameObject.layer);
+
+            switch (layerName)
+            {
+                case "Enemy":
+                    m_target = new Target(TargetType.Enemy, hit);
+                    break;
+                case "Floor":
+                    m_target = new Target(TargetType.Floor, hit);
+                    break;
+                case "Interactable":
+                default: 
+                    break;
+            }
+            m_agent.isStopped = false;
             m_agent.destination = hit.point;
 
 
         }
 
+    }
+
+    void Shoot()
+    {
+        Debug.Log("BANG");
+        RaycastHit hit;
+        Physics.Raycast(transform.position, Vector3.Normalize(m_target.Hit.transform.position - transform.position), out hit, attack_range);
+        Debug.DrawLine(transform.position, hit.point, Color.yellow, 0.1f);
+        StartCoroutine(ShootCooldown());
+    }
+
+    IEnumerator ShootCooldown()
+    {
+        yield return new WaitForSeconds(cooldown);
+        can_shoot = true;
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (m_target.Type != TargetType.None)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(m_agent.destination,0.25f);
+        }
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attack_range);
     }
 }

@@ -100,6 +100,33 @@ public partial class @DiabloInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""weapon1"",
+                    ""type"": ""Button"",
+                    ""id"": ""27fd2ead-1cf3-45be-ac7b-6b48f62b4cef"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""weapon2"",
+                    ""type"": ""Button"",
+                    ""id"": ""6a015e3b-af82-48a9-a720-c2f72ca35895"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""weapon3"",
+                    ""type"": ""Button"",
+                    ""id"": ""af320bc8-24d4-41e8-b662-6522b721b636"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -113,6 +140,39 @@ public partial class @DiabloInput: IInputActionCollection2, IDisposable
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""228552cc-e048-4021-8460-12e37abb78f8"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""weapon1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c4bec547-d9c0-49eb-8a45-e8be317ad26c"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""weapon2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bf795ccc-5a68-41c0-984b-8d78dfc7a802"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""weapon3"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -122,6 +182,9 @@ public partial class @DiabloInput: IInputActionCollection2, IDisposable
         // Main
         m_Main = asset.FindActionMap("Main", throwIfNotFound: true);
         m_Main_Move = m_Main.FindAction("Move", throwIfNotFound: true);
+        m_Main_weapon1 = m_Main.FindAction("weapon1", throwIfNotFound: true);
+        m_Main_weapon2 = m_Main.FindAction("weapon2", throwIfNotFound: true);
+        m_Main_weapon3 = m_Main.FindAction("weapon3", throwIfNotFound: true);
     }
 
     ~@DiabloInput()
@@ -203,6 +266,9 @@ public partial class @DiabloInput: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Main;
     private List<IMainActions> m_MainActionsCallbackInterfaces = new List<IMainActions>();
     private readonly InputAction m_Main_Move;
+    private readonly InputAction m_Main_weapon1;
+    private readonly InputAction m_Main_weapon2;
+    private readonly InputAction m_Main_weapon3;
     /// <summary>
     /// Provides access to input actions defined in input action map "Main".
     /// </summary>
@@ -218,6 +284,18 @@ public partial class @DiabloInput: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Main/Move".
         /// </summary>
         public InputAction @Move => m_Wrapper.m_Main_Move;
+        /// <summary>
+        /// Provides access to the underlying input action "Main/weapon1".
+        /// </summary>
+        public InputAction @weapon1 => m_Wrapper.m_Main_weapon1;
+        /// <summary>
+        /// Provides access to the underlying input action "Main/weapon2".
+        /// </summary>
+        public InputAction @weapon2 => m_Wrapper.m_Main_weapon2;
+        /// <summary>
+        /// Provides access to the underlying input action "Main/weapon3".
+        /// </summary>
+        public InputAction @weapon3 => m_Wrapper.m_Main_weapon3;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -247,6 +325,15 @@ public partial class @DiabloInput: IInputActionCollection2, IDisposable
             @Move.started += instance.OnMove;
             @Move.performed += instance.OnMove;
             @Move.canceled += instance.OnMove;
+            @weapon1.started += instance.OnWeapon1;
+            @weapon1.performed += instance.OnWeapon1;
+            @weapon1.canceled += instance.OnWeapon1;
+            @weapon2.started += instance.OnWeapon2;
+            @weapon2.performed += instance.OnWeapon2;
+            @weapon2.canceled += instance.OnWeapon2;
+            @weapon3.started += instance.OnWeapon3;
+            @weapon3.performed += instance.OnWeapon3;
+            @weapon3.canceled += instance.OnWeapon3;
         }
 
         /// <summary>
@@ -261,6 +348,15 @@ public partial class @DiabloInput: IInputActionCollection2, IDisposable
             @Move.started -= instance.OnMove;
             @Move.performed -= instance.OnMove;
             @Move.canceled -= instance.OnMove;
+            @weapon1.started -= instance.OnWeapon1;
+            @weapon1.performed -= instance.OnWeapon1;
+            @weapon1.canceled -= instance.OnWeapon1;
+            @weapon2.started -= instance.OnWeapon2;
+            @weapon2.performed -= instance.OnWeapon2;
+            @weapon2.canceled -= instance.OnWeapon2;
+            @weapon3.started -= instance.OnWeapon3;
+            @weapon3.performed -= instance.OnWeapon3;
+            @weapon3.canceled -= instance.OnWeapon3;
         }
 
         /// <summary>
@@ -308,5 +404,26 @@ public partial class @DiabloInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMove(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "weapon1" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnWeapon1(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "weapon2" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnWeapon2(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "weapon3" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnWeapon3(InputAction.CallbackContext context);
     }
 }
